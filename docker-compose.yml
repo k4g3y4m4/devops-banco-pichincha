@@ -14,6 +14,6 @@ services:
     restart: always
     build: ./nginx
     ports:
-      - "80:80"
+      - "8000:8000"
     depends_on:
       - devops_app
