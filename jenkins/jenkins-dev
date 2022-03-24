@@ -1,0 +1,32 @@
+def MAJOR_VERSION = "1"
+def ARTIFACT_VERSION = "${MAJOR_VERSION}.${BUILD_NUMBER}"
+def STACK_NAME = "devops"
+def STACK_NAME_API = "apigateway-devops"
+def BUCKET_NAME = "devops-cyanez"
+
+node('linux'){
+
+deployToDev{
+  stage('Git Checkout'){
+    checkout scm
+  }
+
+
+  stage('Dev Deploy'){
+      withAWS(credentials:getAWSCredentialID(environment:"${env.APPENV}"), region:'us-east-1') {
+        sh """
+                aws s3 mb s3://${BUCKET_NAME}
+                aws s3 cp api-gateway-cft.yaml s3://${BUCKET_NAME} --acl public-read
+                aws s3 cp CODE s3://${BUCKET_NAME}/ --recursive --acl public-read
+                ls -latr
+                    """
+
+      cfnDeploy(stackName:"${STACK_NAME}", 
+      cfnUpdate(stack:"${STACK_NAME_API}", params:["urlHostApi=https://7z5zk931f7.execute-api.us-east-1.amazonaws.com/DevOps", "stageDeploy=devops","roleId=${ROLEID}", "projectName=devops",
+      stackName=${STACK_NAME}","basePath=DevOps",
+      "domainFrontEnd=7z5zk931f7.execute-api.us-east-1.amazonaws.com", "protocol=https://"],
+            url:"https://s3.amazonaws.com/${BUCKET_NAME}/api-gateway-cft.yaml")
+      }
+    }
+  }
+}
