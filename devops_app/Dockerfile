@@ -4,6 +4,6 @@ WORKDIR usr/src/flask_app
 COPY requirements.txt .
 RUN apt-get update -y \ 
     && pip install --upgrade pip \
-    && pip install -r requirements.txt
+    && pip install -r requirements.txt \
     && pip install functools -y
 COPY . .
