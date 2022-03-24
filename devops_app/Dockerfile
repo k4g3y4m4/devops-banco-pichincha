@@ -5,5 +5,5 @@ COPY requirements.txt .
 RUN apt-get update -y \ 
     && pip install --upgrade pip \
     && pip install -r requirements.txt \
-    && pip install functools -y
+    && pip install functools
 COPY . .
